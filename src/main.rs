@@ -128,19 +128,20 @@ Enter your API Key:"
 
     loop {
         println!(
-            "\n1 - to exchange currencies.
+            "\nPut:\n1 - to exchange currencies.
 2 - to view available currencies and their current exchange rates(to USD).
 3 - to refresh the API Key.
-4 - to exit."
+4 - to refresh data for the last used currecny(it is cached).
+0 - to exit."
         );
         let start_input: u16 = input().trim().parse().expect("Not an int.");
         match start_input {
             1 => {
-                println!("Source currency:");
+                println!("Source currency, that is from which you\'ll be fetching data:");
                 let source_input = input().trim().to_string();
-                println!("Target currency:");
+                println!("Target currency, that is to what you'll be converting:");
                 let target_input = input().trim().to_string();
-                println!("Amount:");
+                println!("Amount of the source currency:");
                 let amount_input: f32 = input().trim().parse().expect("Not an number.");
 
                 let result = data.exchange(source_input, target_input, amount_input);
@@ -153,8 +154,14 @@ Enter your API Key:"
                 println!("Enter your API Key:");
                 let api_key_input = input().trim().to_string();
                 data.api_key = api_key_input;
-            }
-            4 => std::process::exit(0),
+            },
+            // 4 => {
+            //     if let Some(parse) = &data.cache {
+            //         let currect_currency = parse.base_code.clone().as_str();
+            //         data.set_up(currect_currency);
+            //     }
+            // }
+            0 => std::process::exit(0),
             _ => println!("There is no such option."),
         }
     }
