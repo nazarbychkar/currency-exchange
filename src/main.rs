@@ -131,9 +131,8 @@ Enter your API Key:"
             "\nPut:\n1 - to exchange currencies.
 2 - to view available currencies and their current exchange rates(to USD).
 3 - to refresh the API Key.
-4 - to refresh data for the last used currecny(it is cached).
 0 - to exit."
-        );
+        ); //TODO 4- to refresh current currency data.
         let start_input: u16 = input().trim().parse().expect("Not an int.");
         match start_input {
             1 => {
@@ -155,12 +154,6 @@ Enter your API Key:"
                 let api_key_input = input().trim().to_string();
                 data.api_key = api_key_input;
             },
-            // 4 => {
-            //     if let Some(parse) = &data.cache {
-            //         let currect_currency = parse.base_code.clone().as_str();
-            //         data.set_up(currect_currency);
-            //     }
-            // }
             0 => std::process::exit(0),
             _ => println!("There is no such option."),
         }
