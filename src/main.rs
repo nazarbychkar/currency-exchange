@@ -136,11 +136,11 @@ Enter your API Key:"
         let start_input: u16 = input().trim().parse().expect("Not an int.");
         match start_input {
             1 => {
-                println!("Source currency, that is from which you\'ll be fetching data:");
+                println!("\nYou can put currencies in their internation codes, like \"USD\" or just \"usd\" or even \"UsD\" :)\n\nPut the \"source currency\", that is from which you\'ll be fetching data:");
                 let source_input = input().trim().to_string();
-                println!("Target currency, that is to what you'll be converting:");
+                println!("Put the \"target currency\", that is to what you'll be converting:");
                 let target_input = input().trim().to_string();
-                println!("Amount of the source currency:");
+                println!("Put an amount of the source currency:");
                 let amount_input: f32 = input().trim().parse().expect("Not an number.");
 
                 let result = data.exchange(source_input, target_input, amount_input);
