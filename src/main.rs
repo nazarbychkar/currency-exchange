@@ -1,7 +1,6 @@
 //! Currency Exchange is a command-line tool written in Rust that
 //! facilitates currency conversion using real-time exchange rate
 //! data obtained from an API.
-
 mod api_response;
 mod data;
 mod service;
@@ -36,10 +35,10 @@ Enter your API Key:"
                 let target_input = input().trim().to_string();
                 println!("Put an amount of the source currency:");
                 let amount_input: f32 = input().trim().parse().expect("Not an number.");
-                
-                println!("{}", source_input);
 
-                let result = data.exchange(&source_input, &target_input, amount_input).await;
+                let result = data
+                    .exchange(&source_input, &target_input, amount_input)
+                    .await;
                 println!("{result}");
             }
             2 => {
