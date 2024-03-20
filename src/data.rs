@@ -99,3 +99,81 @@ impl Data {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::{collections::HashMap, env};
+
+    use crate::{api_response::APIResponse, data::Data};
+
+    #[test]
+    fn test_data_object_construction() {
+        let api_key = env::var("YOUR_API_KEY")
+            .expect("$YOUR_API_KEY is not set")
+            .to_string();
+
+        let data = Data::new(api_key.clone(), None);
+
+        assert_eq!(data.api_key, api_key);
+        assert!(data.cache.is_none());
+
+        let mock_response = APIResponse {
+            result: "success".to_string(),
+            ..Default::default()
+        };
+        let data_with_cache = Data::new(api_key.clone(), Some(mock_response));
+
+        assert_eq!(data_with_cache.api_key, api_key);
+    }
+
+    #[tokio::test]
+    async fn test_data_cache_usage() {
+        let api_key = env::var("YOUR_API_KEY")
+            .expect("$YOUR_API_KEY is not set")
+            .to_string();
+        let currency_code = "EUR".to_string();
+
+        let mut data = Data::new(api_key.clone(), None);
+
+        let result = data.set_up(&currency_code.clone()).await;
+        assert!(result.is_ok());
+        assert!(data.cache.is_some());
+
+        let second_result = data.set_up(&currency_code.clone()).await;
+        assert!(second_result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn test_data_exchange_rate_calculation() {
+        let api_key = env::var("YOUR_API_KEY")
+            .expect("$YOUR_API_KEY is not set")
+            .to_string();
+        let mock_response = APIResponse {
+            result: "success".to_string(),
+            base_code: "USD".to_string(),
+            conversion_rates: HashMap::from([
+                ("EUR".to_string(), 0.94),
+                ("JPY".to_string(), 130.0),
+            ]),
+            ..Default::default()
+        };
+
+        let mut data = Data::new(api_key.clone(), Some(mock_response));
+
+        let source_currency = "USD".to_string();
+        let target_currency = "EUR".to_string();
+        let amount = 100.0;
+
+        let exchange_result = data
+            .exchange(&source_currency, &target_currency, amount)
+            .await;
+
+        assert!(exchange_result.contains(&format!(
+            "{} {} will be {} in {}",
+            amount,
+            source_currency,
+            amount * 0.94,
+            target_currency
+        )));
+    }
+}
